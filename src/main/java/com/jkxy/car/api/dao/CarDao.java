@@ -11,6 +11,9 @@ public interface CarDao {
     @Select("select * from carMessage")
     List<Car> findAll();
 
+    @Select("select * from carMessage where carName like #{carName} order by id limit #{page},#{size}")
+    List<Car> findCar(@Param("carName")String carName,@Param("page")int page,@Param("size")int size);
+
     @Select("select * from carMessage where id = #{id}")
     Car findById(int id);
 

@@ -6,8 +6,10 @@ import com.jkxy.car.api.utils.JSONResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -52,6 +54,34 @@ public class CarController {
     public JSONResult findByCarName(@PathVariable String carName) {
         List<Car> cars = carService.findByCarName(carName);
         return JSONResult.ok(cars);
+    }
+
+    @PostMapping("findCar")
+    public JSONResult findCar(@RequestBody Map map)  {
+        try {
+             String carName = "%";
+             int page = 0;
+             int size = 0;
+
+
+            if (map.get("carName") != null && !"".equals(map.get("carName").toString().trim())) {
+                carName ="%"+map.get("carName").toString().trim()+"%";
+            }
+
+            if (map.get("page") != null && !"".equals(map.get("page").toString().trim())) {
+                page = Integer.valueOf(map.get("page").toString().trim());
+            }
+
+            if (map.get("size") != null && !"".equals(map.get("size").toString().trim())) {
+                size =Integer.valueOf(map.get("size").toString().trim());
+            }
+            page = (page-1)*size;
+
+            List<Car> carList = carService.findCar(carName,page,size);
+            return JSONResult.ok(carList);
+        }catch (Exception e){
+            return JSONResult.errorException(e.getMessage());
+        }
     }
 
     /**

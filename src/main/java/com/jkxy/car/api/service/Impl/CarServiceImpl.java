@@ -43,4 +43,9 @@ public class CarServiceImpl implements CarService {
     public void insertCar(Car car) {
         carDao.insertCar(car);
     }
+
+    @Override
+    public List<Car> findCar(String carName,int page,int size) {
+        return carDao.findCar(carName,page,size);
+    }
 }
