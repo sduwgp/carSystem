@@ -20,4 +20,6 @@ public interface CarService {
     void insertCar(Car car);
 
     List<Car> findCar(String carName,int page,int size);
+
+    void buyCar(String carName,int qty);
 }

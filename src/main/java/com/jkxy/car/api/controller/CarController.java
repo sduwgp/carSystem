@@ -1,5 +1,6 @@
 package com.jkxy.car.api.controller;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.jkxy.car.api.pojo.Car;
 import com.jkxy.car.api.service.CarService;
 import com.jkxy.car.api.utils.JSONResult;
@@ -79,6 +80,34 @@ public class CarController {
 
             List<Car> carList = carService.findCar(carName,page,size);
             return JSONResult.ok(carList);
+        }catch (Exception e){
+            return JSONResult.errorException(e.getMessage());
+        }
+    }
+
+    @PostMapping("buyCar")
+    public JSONResult buyCar(@RequestBody Map map)  {
+        try {
+            String carName = "";
+            int qty = 0;
+            if (map.get("carName") != null && !"".equals(map.get("carName").toString().trim())) {
+                carName =map.get("carName").toString().trim();
+            }
+            if (map.get("qty") != null && !"".equals(map.get("qty").toString().trim())) {
+                qty = Integer.valueOf(map.get("qty").toString().trim());
+            }
+            List<Car> cars = carService.findByCarName(carName);
+            if(cars.size()==0|| cars.size()>1) {
+                return JSONResult.ok("未找到唯一的车量清单，请确认");
+            }
+            if(qty >cars.get(0).getInventory() ) {
+                return JSONResult.ok("车辆["+carName+"]所购数量大于库存数["+cars.get(0).getInventory()+"]，请确认");
+            }
+
+            carService.buyCar(carName,qty);
+
+            return JSONResult.ok("购买成功！车辆信息：["+carName+"]，数量为["+qty+"]");
+
         }catch (Exception e){
             return JSONResult.errorException(e.getMessage());
         }
